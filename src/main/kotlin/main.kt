@@ -1,42 +1,35 @@
-val second = 18000
-
+val translationInHours = 60 * 60
+val translationInDay = 24 * 60 * 60
 fun main(){
-agoToText()
+println(agoToText(61))
 }
 
-fun agoToText() {
-    when (second) {
-        in 0 .. 60 -> println("Был(а) только что")
-        in 61 .. 60 * 60 -> println("Был(а) " + minToText() + " назад")
-        in 60 * 60 + 1 .. 24 * 60 * 60 -> println("Был(а) " + hourToText() + " назад")
-        in 24 * 60 * 60 + 1 .. 2 * 24 * 60 * 60 -> println("Сегодня")
-        in 2 * 24 * 60 * 60 + 1 .. 3 * 24 * 60 * 60 -> println("Вчера")
-        else -> println("Давно")
+fun agoToText(second : Int) : String {
+    return when (second) {
+        in 0 .. 60 -> "Был(а) только что"
+        in 61 .. translationInHours -> "Был(а) " + minToText(second) + " назад"
+        in translationInHours + 1 .. translationInDay -> "Был(а) " + hourToText(second) + " назад"
+        in translationInDay + 1 .. 2 * translationInDay -> "Сегодня"
+        in 2 * translationInDay + 1 .. 3 * translationInDay -> "Вчера"
+        else -> "Давно"
     }
 }
 
-fun minToText(): String {
+fun minToText(second : Int): String {
     val minute = (second / 60)
     var total = ""
-    when (minute) {
-        1, 21, 31, 41, 51, 61, 71, 81, 91 -> total = "$minute минуту"
-        in 2 .. 4, in 22 .. 24, in 32 .. 34,
-        in 42 .. 44, in 52 .. 54, in 62 .. 64,
-        in 72 .. 74, in 82 .. 84, in 92 .. 94 -> total = "$minute минуты"
-        in 5 .. 20, in 25 .. 30, in 35 .. 40, in 45 .. 50, in 55 .. 60, in 65 .. 70, in 75 .. 80, in 85 .. 90 -> total = "$minute минут"
-    }
+
+    if (minute % 10 == 1) total = "$minute минуту"
+    if (minute % 10 in 2..4) total = "$minute минуты"
+    if (minute % 100 in 5..20 || minute % 100 == 30 || minute % 100 == 40 || minute % 100 == 50 ) total = "$minute минут"
     return total
 }
-
-fun hourToText(): String {
+fun hourToText(second : Int): String {
     val hour = (second / 60 / 60)
     var total = ""
-    when (hour) {
-        1, 21, 31, 41, 51, 61, 71, 81, 91 -> total = "$hour час"
-        in 2 .. 4, in 22 .. 24, in 32 .. 34,
-        in 42 .. 44, in 52 .. 54, in 62 .. 64,
-        in 72 .. 74, in 82 .. 84, in 92 .. 94 -> total = "$hour часа"
-        in 5 .. 20, in 25 .. 30, in 35 .. 40, in 45 .. 50, in 55 .. 60, in 65 .. 70, in 75 .. 80, in 85 .. 90 -> total = "$hour часов"
-    }
+
+    if (hour % 10 == 1) total = "$hour час"
+    if (hour % 10 in 2..4) total = "$hour часа"
+    if (hour % 100 in 5..20) total = "$hour часов"
     return total
 }
